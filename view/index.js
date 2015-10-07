@@ -12,7 +12,7 @@ var url = require('url');
 _.str = require('underscore.string');
 _.mixin(_.str.exports());
 
-var PartialGenerator = module.exports = function PartialGenerator(args, options, config) {
+var ViewGenerator = module.exports = function ViewGenerator(args, options, config) {
 
     cgUtils.getNameArg(this,args);
 
@@ -20,38 +20,38 @@ var PartialGenerator = module.exports = function PartialGenerator(args, options,
 
 };
 
-util.inherits(PartialGenerator, yeoman.generators.Base);
+util.inherits(ViewGenerator, yeoman.generators.Base);
 
-PartialGenerator.prototype.askFor = function askFor() {
+ViewGenerator.prototype.askFor = function askFor() {
     var cb = this.async();
 
     var prompts = [
         {
             name: 'route',
-            message: 'Enter your route url (i.e. /mypartial/:id).  If you don\'t want a route added for you, leave this empty.'
+            message: 'Enter your route url (i.e. /myview/:id).  If you don\'t want a route added for you, leave this empty.'
         }
     ];
 
-    cgUtils.addNamePrompt(this,prompts,'partial');
+    cgUtils.addNamePrompt(this,prompts,'view');
 
     this.prompt(prompts, function (props) {
         if (props.name){
             this.name = props.name;
         }
         this.route = url.resolve('',props.route);
-        cgUtils.askForModuleAndDir('partial',this,true,cb);
+        cgUtils.askForModuleAndDir('view',this,true,cb);
     }.bind(this));
 };
 
-PartialGenerator.prototype.files = function files() {
+ViewGenerator.prototype.files = function files() {
 
     this.ctrlname = _.camelize(_.classify(this.name)) + 'Ctrl';
 
-    cgUtils.processTemplates(this.name,this.dir,'partial',this,null,null,this.module);
+    cgUtils.processTemplates(this.name,this.dir,'view',this,null,null,this.module);
 
     if (this.route && this.route.length > 0){
-        var partialUrl = this.dir + this.name + '.html';
-        cgUtils.injectRoute(this.module.file,this.config.get('uirouter'),this.name,this.route,partialUrl,this);
+        var viewUrl = this.dir + this.name + '.html';
+        cgUtils.injectRoute(this.module.file,this.config.get('uirouter'),this.name,this.route,viewUrl,this);
     }
 
 };

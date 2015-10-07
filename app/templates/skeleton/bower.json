@@ -8,19 +8,23 @@
     "bower_components"
   ],
   "dependencies": {
-    "jquery": "~2.0",
-    "underscore": "~1.5",
-    "bootstrap": "~3.1",
-    "angular": "~1.2",
-    <% if(uirouter) { print('"angular-ui-router": "~0.2",'); } else { print('"angular-route": "~1.2",'); } %>
-    "angular-animate": "~1.2",
-    "angular-resource": "~1.2",
-    "angular-cookies": "~1.2",
-    "angular-mocks": "~1.2",
-    "angular-ui-utils": "~0.1",
-    "angular-bootstrap": "~0.10",
-    "moment": "~2.5",
-    "less.js": "~1.6",
-    "font-awesome": "~4.0"
+    "jquery": "~<% if (ie8){print('1');}else{print('2')} %>",
+     "lodash": "~3.10",
+     "bootstrap": "~3.3",
+     "moment": "~2.10",
+     "moment-timezone": "~0.4",    
+     "font-awesome": "~4.0",
+     "angular": "~<% if (ie8){print('1.2');}else{print('1.4')} %>",
+     <% if(uirouter) { print('"angular-ui-router": "~0.2",'); } else { if (ie8){print('"angular-route": "~1.2",');}else{print('"angular-route": "~1.4",');}} %>
+     "angular-animate": "~<% if (ie8){print('1.2');}else{print('1.4')} %>",
+     "angular-resource": "~<% if (ie8){print('1.2');}else{print('1.4')} %>",
+     "angular-bootstrap": "~<% if (ie8){print('0.12');}else{print('0.13')} %>",
+     "angular-moment": "~0.10",
+     "awesome-bootstrap-checkbox": "~0.3",
+     "angular-loading-bar": "~0.8",
+     "bootstrap-ext": "https://bitbucket.org/centeva/libs-bootstrap-ext.git#~0.1"
+  },
+  "devDependencies": {
+     "angular-mocks": "~<% if (ie8){print('1.2');}else{print('1.4')} %>"
   }
 }

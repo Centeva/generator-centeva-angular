@@ -25,8 +25,8 @@ DirectiveGenerator.prototype.askFor = function askFor() {
 
     var prompts = [{
         type:'confirm',
-        name: 'needpartial',
-        message: 'Does this directive need an external html file (i.e. partial)?',
+        name: 'needview',
+        message: 'Does this directive need an external html file (i.e. view)?',
         default: true
     }];
 
@@ -36,8 +36,8 @@ DirectiveGenerator.prototype.askFor = function askFor() {
         if (props.name){
             this.name = props.name;
         }
-        this.needpartial = props.needpartial;
-        cgUtils.askForModuleAndDir('directive',this,this.needpartial,cb);
+        this.needview = props.needview;
+        cgUtils.askForModuleAndDir('directive',this,this.needview,cb);
     }.bind(this));
 
 };
@@ -46,7 +46,7 @@ DirectiveGenerator.prototype.files = function files() {
 
     var configName = 'directiveSimpleTemplates';
     var defaultDir = 'templates/simple';
-    if (this.needpartial) {
+    if (this.needview) {
         configName = 'directiveComplexTemplates';
         defaultDir = 'templates/complex';
     }

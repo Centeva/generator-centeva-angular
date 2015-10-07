@@ -4,3 +4,5 @@ node_modules/
 _SpecRunner.html
 .DS_Store
 test-results.xml
+/bower_components
+.grunt
