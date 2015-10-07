@@ -1,42 +1,32 @@
 {
-  "name": "generator-cg-angular",
-  "version": "3.2.0",
-  "description": "Yeoman Generator for Enterprise Angular projects.",
-  "keywords": [
-    "yeoman-generator",
-    "angular"
-  ],
-  "homepage": "https://github.com/cgross/generator-cg-angular",
-  "bugs": "https://github.com/cgross/generator-cg-angular/issues",
-  "author": {
-    "name": "Chris Gross",
-    "email": "schtoo@schtoo.com",
-    "url": "https://github.com/cgross"
-  },
+  "name": "generator-centeva-angular",
+  "version": "0.0.1",
+  "description": "Yeoman generator",
+  "license": "MIT",
   "main": "app/index.js",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/cgross/generator-cg-angular.git"
+  "repository": "marbletravis/generator-centeva-angular",
+  "author": {
+    "name": "Travis Marble",
+    "email": "travis.marble@centeva.com",
+    "url": "https://github.com/marbletravis"
   },
   "scripts": {
     "test": "mocha"
   },
+  "files": [
+    "generators"
+  ],
+  "keywords": [
+    "yeoman-generator"
+  ],
   "dependencies": {
-    "underscore": "~1.5",
-    "underscore.string": "~2.3",
+    "chalk": "^1.0.0",
     "yeoman-generator": "~0.16",
-    "chalk": "~0.4.0",
-    "ng-parse-module": "~0.1.0"
-  },
-  "devDependencies": {
-    "mocha": "~1.10.0"
-  },
-  "engines": {
-    "node": ">=0.8.0"
-  },
-  "licenses": [
-    {
-      "type": "MIT"
-    }
-  ]
+    "yosay": "^1.0.5",
+    "html-wiring": "^1.2.0",
+    "mocha": "*",
+    "ng-parse-module": "^0.1.0",
+    "underscore": "^1.8.3",
+    "underscore.string": "^3.2.2"
+  }
 }

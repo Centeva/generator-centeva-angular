@@ -3,6 +3,7 @@ var util = require('util');
 var path = require('path');
 var yeoman = require('yeoman-generator');
 var cgUtils = require('../utils.js');
+var reader = require('html-wiring');
 
 var CgangularGenerator = module.exports = function CgangularGenerator(args, options, config) {
     yeoman.generators.Base.apply(this, arguments);
@@ -31,7 +32,7 @@ var CgangularGenerator = module.exports = function CgangularGenerator(args, opti
         this.installDependencies({ skipInstall: options['skip-install'] });
     });
 
-    this.pkg = JSON.parse(this.readFileAsString(path.join(__dirname, '../package.json')));
+    this.pkg = JSON.parse(reader.readFileAsString(path.join(__dirname, '../../package.json')));
 };
 
 util.inherits(CgangularGenerator, yeoman.generators.Base);
