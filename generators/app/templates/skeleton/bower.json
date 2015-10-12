@@ -22,7 +22,7 @@
      "angular-moment": "~0.10",
      "awesome-bootstrap-checkbox": "~0.3",
      "angular-loading-bar": "~0.8",
-     "bootstrap-ext": "https://bitbucket.org/centeva/libs-bootstrap-ext.git#~0.1"
+     "bootstrap-ext": "~0.1"
   },
   "devDependencies": {
      "angular-mocks": "~<% if (ie8){print('1.2');}else{print('1.4')} %>"
