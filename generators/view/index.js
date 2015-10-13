@@ -46,7 +46,8 @@ ViewGenerator.prototype.askFor = function askFor() {
 ViewGenerator.prototype.files = function files() {
 
     this.ctrlname = _.camelize(_.classify(this.name)) + 'Ctrl';
-
+    this.className = _.dasherize(this.appname) + '-' + _.dasherize(this.name);
+    
     cgUtils.processTemplates(this.name,this.dir,'view',this,null,null,this.module);
 
     if (this.route && this.route.length > 0){

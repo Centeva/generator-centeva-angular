@@ -49,6 +49,7 @@ DirectiveGenerator.prototype.files = function files() {
     if (this.needview) {
         configName = 'directiveComplexTemplates';
         defaultDir = 'templates/complex';
+        this.className = _.dasherize(this.appname) + '-' + _.dasherize(this.name);
     }
 
     this.htmlPath = path.join(this.dir,this.name + '.html').replace(/\\/g,'/');;
