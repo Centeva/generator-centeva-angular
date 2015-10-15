@@ -13,5 +13,7 @@
     "bower_components/angular-loading-bar/build/loading-bar.min.js",
     "bower_components/angular-moment/angular-moment.min.js"
   ],
-  "dev": "bower_components/angular-mocks/angular-mocks.js"
+  "dev": [
+    "bower_components/angular-mocks/angular-mocks.js"
+  ]
 }

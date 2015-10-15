@@ -37,6 +37,7 @@ ModalGenerator.prototype.askFor = function askFor() {
 ModalGenerator.prototype.files = function files() {
 
     this.ctrlname = _.camelize(_.classify(this.name)) + 'Ctrl';
+    this.className = _.dasherize(this.appname) + '-' + _.dasherize(this.name);
 
     cgUtils.processTemplates(this.name,this.dir,'modal',this,null,null,this.module);
 
