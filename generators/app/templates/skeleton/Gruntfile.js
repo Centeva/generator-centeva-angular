@@ -74,7 +74,7 @@ module.exports = function (grunt) {
                     collapseWhitespace: true
                 },
                 files: [
-                    { expand: true, src: 'app/**/*.html', dest: 'dist/' }
+                    { expand: true, src: ['app/**/*.html'], dest: 'dist/' }
                 ]
             }
         },
@@ -248,22 +248,22 @@ module.exports = function (grunt) {
                 atBegin: true
             },
             less: {
-                files: [createFolderGlobs(['*.less'])],
+                files: ['app/**/*.less'],
                 tasks: ['less:app'],
                 options: {
                     livereload: false
                 }
             },
             js: {
-                files: [createFolderGlobs(['*.js'])],
+                files: ['app/**/*.js', '!app/**/*-spec.js'],
                 tasks: ['ngAnnotate', 'concat:appScripts', 'uglify']
             },
             devJs: {
-                files: [createFolderGlobs('bower_components/*.js')],
+                files: ['bower_components/**/*.js'],
                 tasks: ['concat:vendorScripts', 'concat:vendorDevScripts']
             },
             html: {
-                files: [createFolderGlobs('*.html'), createFolderGlobs('*.cshtml')],
+                files: ['app/**/*.html', 'index.html', 'index.cshtml'],
                 tasks: []
             },
             css: {
@@ -275,7 +275,7 @@ module.exports = function (grunt) {
                 tasks: ['bowerinstall']
             },
             tests: {
-                files: [createFolderGlobs(['*-spec.js'])],
+                files: ['app/**/*-spec.js'],
                 tasks: ['jasmine:tests:build']
             }
         },
