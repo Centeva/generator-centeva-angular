@@ -93,7 +93,6 @@ CgangularGenerator.prototype.askForIe = function askFor() {
 
     this.prompt(prompts, function (props) {
         this.ie8 = props.ie !== 'No (recommended)';
-        this.config.set('ie8',this.ie8);
         cb();
     }.bind(this));
 };
