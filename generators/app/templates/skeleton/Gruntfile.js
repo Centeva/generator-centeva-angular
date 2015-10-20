@@ -128,7 +128,8 @@ module.exports = function (grunt) {
             app: {
                 options: {
                     sourceMap: true,
-                    sourceMapIn: 'temp/app_scripts.js.map'
+                    sourceMapIn: 'temp/app_scripts.js.map',
+                    mangle: false
                 },
                 files: {
                     'temp/app_scripts.min.js': ['temp/app_scripts.js']
