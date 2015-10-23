@@ -47,6 +47,35 @@ module.exports = function (grunt) {
                     dest: 'temp/annotated/',
                     ext: '.annotated.js'
                 }]
+            },
+            dist: {
+                options: {
+                    sourceMap: false
+                },
+                files: [{
+                    expand: true,
+                    src: ["app/**/*.js", "!app/**/*-spec.js"],
+                    dest: 'temp/dist/annotated/',
+                    ext: '.annotated.js'
+                }]
+            }
+        },
+        htmlmin: {
+            index: {
+                options: {
+                    collapseWhitespace: true
+                },
+                files: {
+                    'dist/index.html': 'temp/dist/index.html'
+                }
+            },
+            distHtml: {
+                options: {
+                    collapseWhitespace: true
+                },
+                files: [
+                    { expand: true, src: ['app/**/*.html'], dest: 'dist/' }
+                ]
             }
         },
         concat: {
@@ -58,6 +87,13 @@ module.exports = function (grunt) {
                 src: bower_components.vendor,
                 dest: 'temp/bower_scripts.js'
             },
+            distVendorScripts: {
+                options: {
+                    sourceMap: false
+                },
+                src: bower_components.vendor,
+                dest: 'temp/dist/bower_scripts.js'
+            },
             vendorDevScripts: {
                 src: bower_components.dev,
                 dest: 'temp/vendor_dev_scripts.js'
@@ -65,17 +101,66 @@ module.exports = function (grunt) {
             appScripts: {
                 src: ['temp/annotated/app/app.js', "temp/annotated/app/**/*.js"],
                 dest: 'temp/app_scripts.js'
+            },
+            distSuperAppScripts: {
+                options: {
+                    sourceMap: false
+                },
+                src: ['temp/dist/annotated/app/app.js', "temp/dist/annotated/app/**/*.js", "temp/dist/templates.js"],
+                dest: 'temp/dist/app_scripts.js'
+            },
+            distAppScripts: {
+                options: {
+                    sourceMap: false
+                },
+                src: ['temp/dist/annotated/app/app.js', "temp/dist/annotated/app/**/*.js"],
+                dest: 'temp/dist/app_scripts.js'
+            },
+            dist: {
+                options: {
+                    sourceMap: false
+                },
+                src: ['temp/dist/bower_scripts.js', 'temp/dist/app_scripts.min.js'],
+                dest: 'dist/app.js'
             }
         },
         uglify: {
             app: {
                 options: {
                     sourceMap: true,
-                    sourceMapIn: 'temp/app_scripts.js.map'
+                    sourceMapIn: 'temp/app_scripts.js.map',
+                    mangle: false
                 },
                 files: {
                     'temp/app_scripts.min.js': ['temp/app_scripts.js']
                 }
+            },
+            dist: {
+                options: {
+                    sourceMap: false
+                },
+                files: {
+                    'temp/dist/app_scripts.min.js': ['temp/dist/app_scripts.js']
+                }
+            }
+        },
+        ngtemplates: {
+            dist: {
+                options: {
+                    module: 'test',
+                    htmlmin: {
+                        collapseBooleanAttributes: true,
+                        collapseWhitespace: true,
+                        removeAttributeQuotes: true,
+                        removeComments: false, // Only if you don't use comment directives!
+                        removeEmptyAttributes: true,
+                        removeRedundantAttributes: true,
+                        removeScriptTypeAttributes: true,
+                        removeStyleLinkTypeAttributes: true
+                    }
+                },
+                src: 'app/**/*.html',
+                dest: 'temp/dist/templates.js'
             }
         },
         less: {
@@ -97,7 +182,7 @@ module.exports = function (grunt) {
                 files: {
                     'dist/app.css': 'app/app.less'
                 }
-            }
+            },
         },
         jshint: {
             options: {
@@ -136,7 +221,7 @@ module.exports = function (grunt) {
             tests: {
                 src: ['temp/app_scripts.min.js'],
                 options: {
-                    junit: {path:"temp/reports/jasmine_junit"},
+                    junit: { path: "temp/reports/jasmine_junit" },
                     specs: 'app/**/*-spec.js',
                     vendor: ["temp/bower_scripts.js", "temp/vendor_dev_scripts.js"],
                     outfile: 'temp/specrunner.html',
@@ -164,22 +249,22 @@ module.exports = function (grunt) {
                 atBegin: true
             },
             less: {
-                files: [createFolderGlobs(['*.less'])],
+                files: ['app/**/*.less'],
                 tasks: ['less:app'],
                 options: {
                     livereload: false
                 }
             },
             js: {
-                files: [createFolderGlobs(['*.js'])],
+                files: ['app/**/*.js', '!app/**/*-spec.js'],
                 tasks: ['ngAnnotate', 'concat:appScripts', 'uglify']
             },
             devJs: {
-                files: [createFolderGlobs('bower_components/*.js')],
-                tasks: ['concat:vendorScripts','concat:vendorDevScripts']
+                files: ['bower_components/**/*.js'],
+                tasks: ['concat:vendorScripts', 'concat:vendorDevScripts']
             },
             html: {
-                files: [createFolderGlobs('*.html'), createFolderGlobs('*.cshtml')],
+                files: ['app/**/*.html', 'index.html', 'index.cshtml'],
                 tasks: []
             },
             css: {
@@ -191,12 +276,33 @@ module.exports = function (grunt) {
                 tasks: ['bowerinstall']
             },
             tests: {
-                files: [createFolderGlobs(['*-spec.js'])],
+                files: ['app/**/*-spec.js'],
                 tasks: ['jasmine:tests:build']
             }
         },
         concurrent: {
             buildAll: ['buildApp', 'concat:vendorScripts', 'concat:vendorDevScripts', 'less:app', 'jasmine:tests:build']
+        },
+        clean: {
+            dist: ['dist']
+        },
+        copy: {
+            dist: {
+                files: [
+                    { expand: true, src: ['img/*'], dest: 'dist/' }
+                ]
+            }
+        },
+        dom_munger: {
+            dist: {
+                options: {
+                    remove: 'script[replace=true]',
+                    append: { selector: 'body', html: '<script src="app.js"></script>' },
+                    update: { selector: 'link[href="temp/app.css"]', attribute: 'href', value: 'app.css' }
+                },
+                src: 'index.html',
+                dest: 'temp/dist/index.html'
+            }
         }
     });
 
@@ -209,7 +315,7 @@ module.exports = function (grunt) {
         });
     });
 
-    grunt.registerTask('buildApp', ['ngAnnotate' ,'concat:appScripts', 'uglify']);
+    grunt.registerTask('buildApp', ['ngAnnotate', 'concat:appScripts', 'uglify']);
     grunt.registerTask('build', ['concurrent:buildAll']);
     grunt.registerTask('serve', ['build', 'connect:app', 'watch']);
     grunt.registerTask('fewer', ['less:app']);
@@ -217,4 +323,28 @@ module.exports = function (grunt) {
     grunt.registerTask('lintTeamcity', ['jshint:teamcity']);
     grunt.registerTask('tests', ['build', 'jasmine:tests']);
     grunt.registerTask('debugTests', ['build', 'connect:tests', 'watch:tests']);
+    grunt.registerTask('distWithTemplates', [
+        'clean:dist',
+        'ngAnnotate:dist',
+        'ngtemplates:dist',
+        'concat:distSuperAppScripts',
+        'concat:distVendorScripts',
+        'uglify:dist',
+        'concat:dist',
+        'less:appDist',
+        'dom_munger:dist',
+        'htmlmin:index',
+        'copy:dist']);
+    grunt.registerTask('dist', [
+        'clean:dist',
+        'ngAnnotate:dist',
+        'concat:distAppScripts',
+        'concat:distVendorScripts',
+        'uglify:dist',
+        'concat:dist',
+        'less:appDist',
+        'dom_munger:dist',
+        'htmlmin:index',
+        'htmlmin:distHtml',
+        'copy:dist']);
 };
