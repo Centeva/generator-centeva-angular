@@ -1,3 +1,4 @@
+///<reference path="../../../.grunt/grunt-contrib-jasmine/jasmine.js"/>
 describe('<%= ctrlname %>', function() {
 
     beforeEach(module('<%= appname %>'));
