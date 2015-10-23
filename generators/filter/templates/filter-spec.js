@@ -1,3 +1,4 @@
+///<reference path="../../../.grunt/grunt-contrib-jasmine/jasmine.js"/>
 describe('<%= _.camelize(name) %>', function() {
 
     beforeEach(module('<%= appname %>'));
