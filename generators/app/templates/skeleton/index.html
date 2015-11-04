@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html ng-app="<%= _.camelize(appname) %>">
-<head>
-  <title></title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta charset="utf-8">
-  <link href="temp/app.css" type="text/css" rel="stylesheet">
-</head>
-<body>
+	<head>
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta charset="utf-8">
+		<link href="temp/app.css" type="text/css" rel="stylesheet">
+	</head>
+	<body>
 
-  <div class="container" ui-view>
-  </div>
-  
-  <script replace="true" src="temp/bower_scripts.js"></script>
-  <script replace="true" src="temp/app_scripts.min.js"></script>
+		<% if (!uirouter) { %>
+		<div class="container" ng-view></div>
+		<% } %><% if (uirouter) { %>
+		<div class="container" ui-view></div>
+		<% } %>
 
-</body>
+		<script replace="true" src="temp/bower_scripts.js"></script>
+		<script replace="true" src="temp/app_scripts.min.js"></script>
+
+	</body>
 </html>
