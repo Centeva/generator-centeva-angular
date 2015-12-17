@@ -14,7 +14,7 @@ _.mixin(_.str.exports());
 
 var ViewGenerator = module.exports = function ViewGenerator(args, options, config) {
 
-    cgUtils.getNameArg(this,args);
+    cgUtils.getNameArg(this, args);
 
     yeoman.generators.Base.apply(this, arguments);
 
@@ -32,14 +32,14 @@ ViewGenerator.prototype.askFor = function askFor() {
         }
     ];
 
-    cgUtils.addNamePrompt(this,prompts,'view');
+    cgUtils.addNamePrompt(this, prompts, 'view');
 
     this.prompt(prompts, function (props) {
-        if (props.name){
+        if (props.name) {
             this.name = props.name;
         }
-        this.route = url.resolve('',props.route);
-        cgUtils.askForModuleAndDir('view',this,true,cb);
+        this.route = url.resolve('', props.route);
+        cgUtils.askForModuleAndDir('view', this, true, cb);
     }.bind(this));
 };
 
@@ -47,12 +47,11 @@ ViewGenerator.prototype.files = function files() {
 
     this.ctrlname = _.camelize(_.classify(this.name)) + 'Ctrl';
     this.className = _.dasherize(this.appname) + '-' + _.dasherize(this.name);
+    this.uirouter = this.config.get('uirouter');
+    this.hasRoute = this.route && this.route.length > 0;
+    this.viewUrl = (this.dir + this.name + '.html').replace(/\\/g, '/');
     
-    cgUtils.processTemplates(this.name,this.dir,'view',this,null,null,this.module);
-
-    if (this.route && this.route.length > 0){
-        var viewUrl = this.dir + this.name + '.html';
-        cgUtils.injectRoute(this.module.file,this.config.get('uirouter'),this.name,this.route,viewUrl,this);
-    }
+    cgUtils.processTemplates(this.name, this.dir, 'view', this, null, null, this.module);
+    
 
 };

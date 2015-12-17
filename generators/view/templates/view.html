@@ -1,3 +1,3 @@
-<div class="<%= className %>" ng-controller="<%= ctrlname %> as vm">
+<div class="<%= className %>"<% if (!hasRoute) { %> ng-controller="<%= ctrlname %> as vm" <% } %>>
 	<%= name %> View.
 </div>

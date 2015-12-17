@@ -2,14 +2,12 @@ angular.module('<%= _.camelize(appname) %>', ['ui.bootstrap','<%= routerModuleNa
 <% if (!uirouter) { %>
 angular.module('<%= _.camelize(appname) %>').config(function($routeProvider) {
 
-    /* Add New Routes Above */
     $routeProvider.otherwise({redirectTo:'/home'});
 
 });
 <% } %><% if (uirouter) { %>
 angular.module('<%= _.camelize(appname) %>').config(function($stateProvider, $urlRouterProvider) {
 
-    /* Add New States Above */
     $urlRouterProvider.otherwise('/home');
 
 });

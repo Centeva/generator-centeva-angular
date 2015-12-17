@@ -84,21 +84,6 @@ exports.inject = function(filename,that,module) {
     }
 };
 
-exports.injectRoute = function(moduleFile,uirouter,name,route,routeUrl,that){
-
-    routeUrl = routeUrl.replace(/\\/g,'/');
-
-    if (uirouter){
-        var code = '$stateProvider.state(\''+name+'\', {\n        url: \''+route+'\',\n        templateUrl: \''+routeUrl+'\'\n    });';
-        exports.addToFile(moduleFile,code,exports.STATE_MARKER);
-    } else {
-        exports.addToFile(moduleFile,'$routeProvider.when(\''+route+'\',{templateUrl: \''+routeUrl+'\'});',exports.ROUTE_MARKER);
-    }
-
-    that.log.writeln(chalk.green(' updating') + ' %s',path.basename(moduleFile));
-
-};
-
 exports.getParentModule = function(dir){
     //starting this dir, find the first module and return parsed results
     if (fs.existsSync(dir)) {
