@@ -35,25 +35,10 @@ ModalGenerator.prototype.askFor = function askFor() {
 };
 
 ModalGenerator.prototype.files = function files() {
-
+    this.uirouter = this.config.get('uirouter');
+    this.srvname = _.camelize(this.name);
     this.ctrlname = _.camelize(_.classify(this.name)) + 'Ctrl';
     this.className = _.dasherize(this.appname) + '-' + _.dasherize(this.name);
-
+    this.templateUrl = path.join(this.dir,this.name + '.html');
     cgUtils.processTemplates(this.name,this.dir,'modal',this,null,null,this.module);
-
-    setTimeout((function(){
-
-        console.log('');
-        console.log('  Open this modal by using ' + chalk.bold('angular-ui-bootstrap') + ' module\'s ' + chalk.bold('$modal') + ' service:');
-        console.log('');
-        console.log('  $modal.open({');
-        console.log('      templateUrl: \'' + path.join(this.dir,this.name + '.html') + '\',');
-        console.log('      controller: \''+ this.ctrlname +'as vm\'');
-        console.log('  }).result.then(function(result){');
-        console.log('      //do something with the result');
-        console.log('  });');
-        console.log('');
-
-    }).bind(this),200);
-
 };
