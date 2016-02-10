@@ -7,6 +7,7 @@ _.str = require('underscore.string');
 _.mixin(_.str.exports());
 var chalk = require('chalk');
 var path = require('path');
+var slash = require('slash');
 
 var ModalGenerator = module.exports = function ModalGenerator(args, options, config) {
 
@@ -39,6 +40,6 @@ ModalGenerator.prototype.files = function files() {
     this.srvname = _.camelize(this.name);
     this.ctrlname = _.camelize(_.classify(this.name)) + 'Ctrl';
     this.className = _.dasherize(this.appname) + '-' + _.dasherize(this.name);
-    this.templateUrl = path.join(this.dir,this.name + '.html');
+    this.templateUrl = slash(path.join(this.dir,this.name + '.html'));
     cgUtils.processTemplates(this.name,this.dir,'modal',this,null,null,this.module);
 };
