@@ -2,8 +2,12 @@
   "name": "<%= _.camelize(appname) %>",
   "version": "0.0.0",
   "devDependencies": {
+    "babel-preset-es2015": "^6.9.0",
+    "bootbox": "~4.4.0",
     "grunt": "~0.4",
     "grunt-angular-templates": "^0.5",
+    "grunt-babel": "^6.0.0",
+    "grunt-bootlint": "^0.10.0",
     "grunt-concurrent": "^2.0",
     "grunt-contrib-clean": "^0.6.0",
     "grunt-contrib-concat": "^0.5",
@@ -19,6 +23,7 @@
     "grunt-dom-munger": "^3.4",
     "grunt-lesslint": "^1.4",
     "grunt-ng-annotate": "^1.0",
-    "load-grunt-tasks": "^3.3"
+    "load-grunt-tasks": "^3.3",
+    "grunt-force-task": "^1.0.0"
   }
 }

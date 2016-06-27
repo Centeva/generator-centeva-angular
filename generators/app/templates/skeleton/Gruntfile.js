@@ -1,4 +1,3 @@
-/// <binding ProjectOpened='watch' />
 'use strict';
 
 module.exports = function (grunt) {
@@ -6,6 +5,7 @@ module.exports = function (grunt) {
 	var bower_components = grunt.file.readJSON("bower_components.json");
 
 	require('load-grunt-tasks')(grunt);
+	grunt.loadNpmTasks('grunt-force-task');
 
 	//Using exclusion patterns slows down Grunt significantly
 	//instead of creating a set of patterns like '**/*.js' and '!**/node_modules/**'
@@ -41,23 +41,27 @@ module.exports = function (grunt) {
 				options: {
 					sourceMap: true
 				},
-				files: [{
+				files: [
+					{
 						expand: true,
 						src: ["app/**/*.js", "!app/**/*-spec.js"],
 						dest: 'temp/annotated/',
 						ext: '.annotated.js'
-					}]
+					}
+				]
 			},
 			dist: {
 				options: {
 					sourceMap: false
 				},
-				files: [{
+				files: [
+					{
 						expand: true,
 						src: ["app/**/*.js", "!app/**/*-spec.js"],
 						dest: 'temp/dist/annotated/',
 						ext: '.annotated.js'
-					}]
+					}
+				]
 			}
 		},
 		htmlmin: {
@@ -74,7 +78,7 @@ module.exports = function (grunt) {
 					collapseWhitespace: true
 				},
 				files: [
-					{expand: true, src: ['app/**/*.html'], dest: 'dist/'}
+					{ expand: true, src: ['app/**/*.html'], dest: 'dist/' }
 				]
 			}
 		},
@@ -99,21 +103,25 @@ module.exports = function (grunt) {
 				dest: 'temp/vendor_dev_scripts.js'
 			},
 			appScripts: {
-				src: ['temp/annotated/app/app.js', "temp/annotated/app/**/*.js"],
+				src: ['temp/babeled/app/app.js', "temp/babeled/app/**/*.js"],
+				dest: 'temp/app_scripts.js'
+			},
+			appSuperScripts: {
+				src: ['temp/babeled/app/app.js', "temp/babeled/app/**/*.js", "temp/babeled.js"],
 				dest: 'temp/app_scripts.js'
 			},
 			distSuperAppScripts: {
 				options: {
 					sourceMap: false
 				},
-				src: ['temp/dist/annotated/app/app.js', "temp/dist/annotated/app/**/*.js", "temp/dist/templates.js"],
+				src: ['temp/dist/babeled/app/app.js', "temp/dist/babeled/app/**/*.js", "temp/dist/templates.js"],
 				dest: 'temp/dist/app_scripts.js'
 			},
 			distAppScripts: {
 				options: {
 					sourceMap: false
 				},
-				src: ['temp/dist/annotated/app/app.js', "temp/dist/annotated/app/**/*.js"],
+				src: ['temp/dist/babeled/app/app.js', "temp/dist/babeled/app/**/*.js"],
 				dest: 'temp/dist/app_scripts.js'
 			},
 			dist: {
@@ -148,19 +156,16 @@ module.exports = function (grunt) {
 			dist: {
 				options: {
 					module: '<%= _.camelize(appname) %>',
-					htmlmin: {
-						collapseBooleanAttributes: true,
-						collapseWhitespace: true,
-						removeAttributeQuotes: true,
-						removeComments: false, // Only if you don't use comment directives!
-						removeEmptyAttributes: true,
-						removeRedundantAttributes: true,
-						removeScriptTypeAttributes: true,
-						removeStyleLinkTypeAttributes: true
-					}
 				},
 				src: 'app/**/*.html',
 				dest: 'temp/dist/templates.js'
+			},
+			app: {
+				options: {
+					module: 'licensing'
+				},
+				src: 'app/**/*.html',
+				dest: 'temp/templates.js'
 			}
 		},
 		less: {
@@ -194,13 +199,13 @@ module.exports = function (grunt) {
 					reporter: 'checkstyle',
 					reporterOutput: 'temp/reports/jshint_checkstyle.xml'
 				},
-				files: {src: [createFolderGlobs('*.js')]}
+				files: { src: ["app/**/*.js"] }
 			},
 			app: {
 				options: {
 					force: true
 				},
-				files: {src: [createFolderGlobs('*.js')]}
+				files: { src: ["app/**/*.js"] }
 			}
 		},
 		// lesslint: { //This includes bootstrap, need to figure out how to not include bootstrap.
@@ -221,9 +226,9 @@ module.exports = function (grunt) {
 			tests: {
 				src: ['temp/app_scripts.min.js'],
 				options: {
-					junit: {path: "temp/reports/jasmine_junit"},
+					junit: { path: "temp/reports/jasmine_junit" },
 					specs: 'app/**/*-spec.js',
-					vendor: ["temp/bower_scripts.js", "temp/vendor_dev_scripts.js"],
+					vendor: [bower_components.vendor, bower_components.dev],
 					outfile: 'temp/specrunner.html',
 					keepRunner: true
 				}
@@ -246,11 +251,12 @@ module.exports = function (grunt) {
 		watch: {
 			options: {
 				livereload: true,
-				atBegin: true
+				atBegin: true,
+				event: ['changed', 'added', 'deleted']
 			},
 			tasks: {
-			  files: [],
-			  tasks: ['copy:build']
+				files: [],
+				tasks: ['copy:build']
 			},
 			less: {
 				files: ['app/**/*.less'],
@@ -261,10 +267,10 @@ module.exports = function (grunt) {
 			},
 			js: {
 				files: ['app/**/*.js', '!app/**/*-spec.js'],
-				tasks: ['ngAnnotate', 'concat:appScripts', 'uglify:app']
+				tasks: ['ngAnnotate:appScripts','babel:appScripts', 'concat:appScripts'/*, 'uglify:app'*/]
 			},
 			devJs: {
-				files: ['bower_components/**/*.js', 'bower_components.json'],
+				files: bower_components.vendor,
 				tasks: ['concat:vendorScripts', 'concat:vendorDevScripts']
 			},
 			html: {
@@ -286,56 +292,99 @@ module.exports = function (grunt) {
 		},
 		clean: {
 			dist: ['dist', 'temp/dist'],
-			temp: ['temp']
+			temp: ['temp'],
+			deploy: ['deploy']
 		},
 		copy: {
 			dist: {
 				files: [
-					{expand: true, src: ['img/*'], dest: 'dist/'},
-					{expand: true, flatten: true, src: ['bower_components/font-awesome/fonts/*'], dest: 'dist/fonts/'},
-					{expand: true, flatten: true, src: ['bower_components/bootstrap/fonts/*'], dest: 'dist/fonts/'}
+					{ expand: true, src: ['img/*'], dest: 'dist/' },
+					{ expand: true, flatten: true, src: ['bower_components/font-awesome/fonts/*'], dest: 'dist/fonts/' },
+					{ expand: true, flatten: true, src: ['bower_components/bootstrap/fonts/*'], dest: 'dist/fonts/' },
+					{ expand: true, flatten: true, src: ['app/fonts/*'], dest: 'dist/fonts/' },
+					{ expand: true, src: ['app/**/*.html'], dest: 'dist/' }
+
 				]
 			},
 			build: {
 				files: [
-					{expand: true, flatten: true, src: ['bower_components/font-awesome/fonts/*'], dest: 'temp/fonts/'},
-					{expand: true, flatten: true, src: ['bower_components/bootstrap/fonts/*'], dest: 'temp/fonts/'}
+					{ expand: true, flatten: true, src: ['bower_components/font-awesome/fonts/*'], dest: 'temp/fonts/' },
+					{ expand: true, flatten: true, src: ['bower_components/bootstrap/fonts/*'], dest: 'temp/fonts/' },
+					{ expand: true, flatten: true, src: ['app/fonts/*'], dest: 'temp/fonts/' }
+				]
+			},
+			deploy: {
+				files: [
+					{expand:true, src:['Global.asax'], dest:'deploy/'},
+					{expand:true, src:['Web.config'], dest:'deploy/'},
+					{ expand: true, cwd: 'dist', src: ['**'], dest: 'deploy/' },
+					{expand:true, cwd:'bin', src:['**'], dest: 'deploy/bin/'}
 				]
 			}
 		},
 		dom_munger: {
 			dist: {
 				options: {
-					remove: 'script[replace=true]',
-					append: {selector: 'body', html: '<script src="app.js"></script>'},
-					update: {selector: 'link[href="temp/app.css"]', attribute: 'href', value: 'app.css'}
+					remove: '#vendor_scripts',
+					update: [{ selector: '#app_scripts', attribute: 'src', value: 'app.js' },
+					{ selector: 'link[href="temp/app.css"]', attribute: 'href', value: 'app.css' }]
 				},
 				src: 'index.html',
 				dest: 'temp/dist/index.html'
 			}
 		},
 		concurrent: {
-			build: ['concat:vendorScripts', 'concat:vendorDevScripts', 'less:app', 'jasmine:tests:build']
+			build: ['concat:vendorScripts', 'concat:vendorDevScripts', 'less:app', 'jasmine:tests:build'],
+			jsWatch: ['ngtemplates:app', 'ngAnnotate:appScripts']
+		},
+		babel: {
+			options: {
+				sourceMap: true,
+				presets: ['es2015']
+			},
+			appScripts: {
+				files: [
+					{
+						expand: true,
+						cwd: "temp/annotated/",
+						src: ["**/*.js"],
+						dest: 'temp/babeled/',
+						ext: '.babeled.js'
+					}
+				]
+			},
+			dist: {
+				files: [
+					{
+						expand: true,
+						cwd: "temp/dist/annotated/",
+						src: ["**/*.js"],
+						dest: 'temp/dist/babeled/',
+						ext: '.babeled.js'
+					}
+				]
+			}
 		}
 	});
 
 	grunt.registerTask('bowerinstall', 'install the backend and frontend dependencies', function () {
 		var exec = require('child_process').exec;
 		var cb = this.async();
-		exec('bower install', {cwd: ''}, function (err, stdout, stderr) {
+		exec('bower install', { cwd: '' }, function (err, stdout, stderr) {
 			console.log(stdout);
 			cb();
 		});
 	});
-	grunt.registerTask('build', 'Generates temp/compiled files necessary to run', ['clean:temp', 'ngAnnotate', 'concat:appScripts', 'uglify:app', 'concurrent:build', 'copy:build']);
+	grunt.registerTask('build', 'Generates temp/compiled files necessary to run', ['clean:temp', 'ngAnnotate:appScripts', 'babel:appScripts', 'concat:appScripts', 'uglify:app', 'concurrent:build', 'copy:build']);
 	grunt.registerTask('serve', 'Builds and hosts project with watch', ['build', 'connect:app', 'watch']);
 	grunt.registerTask('lint', 'Runs code quality inspections', ['jshint:app']);
 	grunt.registerTask('lintTeamcity', 'Runs code quality inspections and generates reports for teamcity', ['jshint:teamcity']);
-	grunt.registerTask('tests', 'Runs jasmine tests', ['build', 'jasmine:tests']);
-	grunt.registerTask('debugTests', 'Debugs jasmine tests.', ['build', 'connect:tests', 'watch:tests']);
-	grunt.registerTask('distWithTemplates', [
-		'clean:dist',
+	grunt.registerTask('tests', 'Runs jasmine tests', ['build', 'force:jasmine:tests']);
+	grunt.registerTask('debugTests', 'Debugs jasmine tests.', ['build', 'connect:tests', 'watch']);
+	grunt.registerTask('distWithTemplates', 'Creates a dist build with templates instead of .html files.'
+		['clean:dist',
 		'ngAnnotate:dist',
+		'babel:dist',
 		'ngtemplates:dist',
 		'concat:distSuperAppScripts',
 		'concat:distVendorScripts',
@@ -345,9 +394,10 @@ module.exports = function (grunt) {
 		'dom_munger:dist',
 		'htmlmin:index',
 		'copy:dist']);
-	grunt.registerTask('dist', [
-		'clean:dist',
+	grunt.registerTask('dist', 'Creates a dist build with normal .html files.',
+		['clean:dist',
 		'ngAnnotate:dist',
+		'babel:dist',
 		'concat:distAppScripts',
 		'concat:distVendorScripts',
 		'uglify:dist',
@@ -355,6 +405,10 @@ module.exports = function (grunt) {
 		'less:appDist',
 		'dom_munger:dist',
 		'htmlmin:index',
-		'htmlmin:distHtml',
 		'copy:dist']);
+	grunt.registerTask('deploy', 'Deploys', [
+		'clean:deploy',
+		'dist',
+		'copy:deploy'
+	]);
 };
