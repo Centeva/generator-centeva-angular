@@ -1,6 +1,6 @@
 #generator-centeva-angular
 
->Yeoman Generator for Centeva Projects (http://http://www.centeva.com/)
+>Yeoman Generator for Centeva Projects (http://www.centeva.com/)
 
 This generator follows the [Angular Best Practice Guidelines for Project Structure](https://blog.angularjs.org/2014/02/an-angularjs-style-guide-and-best.html?_escaped_fragment_=).
 
@@ -61,7 +61,7 @@ Prerequisites: Node, Grunt, Yeoman, and Bower.  Once Node is installed, do:
 
 Next, install this generator:
 
-    npm install -g generator-cg-angular
+    npm install -g generator-centeva-angular
 
 To create a project:
 
